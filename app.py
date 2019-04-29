@@ -43,10 +43,12 @@ def main():
     numOfCommits = 0
     repo = content["repository"]["name"]
     for commit in content["commits"]:
+        commitMessage = (commit['message'] if len(commit['message']) <= 50 else commit['message'][:47] + '...')
+        commitMessage = commitMessage.split('\n')[0]
         numOfCommits += 1
 
         commits.append(
-            f"`{commit['id'][:7]}` - {commit['message'] if len(commit['message']) <= 50 else commit['message'][:47] + '...'}"
+            f"`{commit['id'][:7]}` - {commitMessage}"
         )
 
     data = {"embeds": [{"description": '\n'.join(map(str, commits)),
