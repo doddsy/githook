@@ -42,14 +42,22 @@ def main():
     commits = []
     numOfCommits = 0
     repo = content["repository"]["name"]
+    isPrivate = content["repository"]["visibility_level"]
+    print(isPrivate)
     for commit in content["commits"]:
         commitMessage = (commit['message'] if len(commit['message']) <= 50 else commit['message'][:47] + '...')
         commitMessage = commitMessage.split('\n')[0]
+        commitUrl = commit['url']
         numOfCommits += 1
 
-        commits.append(
-            f"`{commit['id'][:7]}` - {commitMessage}"
-        )
+        if isPrivate != 0:
+            commits.append(
+                f"[`{commit['id'][:7]}`]({commitUrl}) - {commitMessage}"
+            )
+        else:
+            commits.append(
+                f"`{commit['id'][:7]}` - {commitMessage}"
+            )
 
     data = {"embeds": [{"description": '\n'.join(map(str, commits)),
                         "title": f"{numOfCommits} new commits on {repo}",
