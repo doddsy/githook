@@ -43,6 +43,7 @@ def main():
     numOfCommits = 0
     repo = content["repository"]["name"]
     isPrivate = content["repository"]["visibility_level"]
+    branch = (":" + content["ref"].split("/")[2]) if config.SHOW_BRANCH == "TRUE" else ""
     print(isPrivate)
     for commit in content["commits"]:
         commitMessage = (commit['message'] if len(commit['message']) <= 50 else commit['message'][:47] + '...')
@@ -60,7 +61,7 @@ def main():
             )
 
     data = {"embeds": [{"description": '\n'.join(map(str, commits)),
-                        "title": f"{numOfCommits} new commits on {repo}",
+                        "title": f"{numOfCommits} new commits on {repo}{branch}",
                         "color": 14423100,
                         "timestamp": datetime.now().isoformat()}]}
 
@@ -111,6 +112,19 @@ if __name__ == '__main__':
         elif checkwebhook(config.WEBHOOK_URL) is not True:
             configerror("undefined", extra="Your webhook URL is invalid. Please check it is valid before running the program again.")
             sys.exit(1)
+
+    try:
+        config.SHOW_BRANCH
+    # Check if the user (somehow) forgot to add a SHOW_BRANCH key to the config.
+    # We'll still let them run if this is missing, it's not like it's gonna ruin everything. Unlike you, Dave, you damn homewrecker.
+    except AttributeError:
+        configerror("undefined", extra="You are missing a 'SHOW_BRANCH' key in your config. Branches will be hidden in commit embeds.")
+        config.SHOW_BRANCH = "FALSE"
+    else:
+        # If SHOW_BRANCH is something weird, don't the branch in commit embed messages.
+        if config.SHOW_BRANCH not in ("TRUE", "FALSE"):
+            configerror("undefined", extra="Your 'SHOW_BRANCH' key is neither 'TRUE' or 'FALSE'. Defaulting to 'FALSE'.")
+            config.SHOW_BRANCH = "FALSE"
 
     try:
         config.PORT
