@@ -30,6 +30,13 @@ app = Flask(__name__)
 
 @app.route('/', methods=['POST'])
 def main():
+    # If incoming request doesn't contain a '?webhook=' parameter
+    if 'webhook' in request.args:
+        if checkwebhook(request.args.get('webhook')) is not True:
+            return Response(status=400)
+    else:
+        return Response(status=400)
+
     # If incoming request headers don't match Gitlab's headers or the token is not matching
     if ((not request.headers.get('X-Gitlab-Event')) or
             (not request.headers.get('X-Gitlab-Token')) or
@@ -95,22 +102,6 @@ if __name__ == '__main__':
         # The equivalent of your password being password
         elif config.GITLAB_TOKEN == "DefaultValuePleaseChangeMe":
             configerror("default", "GITLAB_TOKEN")
-            sys.exit(1)
-
-    try:
-        config.WEBHOOK_URL
-    # Check if the user (somehow) forgot to add a WEBHOOK_URL key to the config
-    except AttributeError:
-        configerror("missing", "WEBHOOK_URL")
-        sys.exit(1)
-    else:
-        # where tf it gon' send to buddy?
-        if config.WEBHOOK_URL == "":
-            configerror("default", "WEBHOOK_URL")
-            sys.exit(1)
-        # scroll up to see this magical function in all it's glory
-        elif checkwebhook(config.WEBHOOK_URL) is not True:
-            configerror("undefined", extra="Your webhook URL is invalid. Please check it is valid before running the program again.")
             sys.exit(1)
 
     try:
