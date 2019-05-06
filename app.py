@@ -32,15 +32,14 @@ app = Flask(__name__)
 def main():
     # If incoming request doesn't contain a '?webhook=' parameter
     if 'webhook' in request.args:
-        if checkwebhook(request.args.get('webhook')) is not True:
+        webhook_url = request.args.get('webhook')
+        if checkwebhook(webhook_url) is not True:
             return Response(status=400)
     else:
         return Response(status=400)
 
     # If incoming request headers don't match Gitlab's headers or the token is not matching
-    if ((not request.headers.get('X-Gitlab-Event')) or
-            (not request.headers.get('X-Gitlab-Token')) or
-            (request.headers.get('X-Gitlab-Token') != config.GITLAB_TOKEN)):
+    if not request.headers.get('X-Gitlab-Event'):
         # 401 unauthorised
         return Response(status=401)
 
@@ -51,7 +50,6 @@ def main():
     repo = content["repository"]["name"]
     isPrivate = content["repository"]["visibility_level"]
     branch = (":" + content["ref"].split("/")[2]) if config.SHOW_BRANCH == "TRUE" else ""
-    print(isPrivate)
     for commit in content["commits"]:
         commitMessage = (commit['message'] if len(commit['message']) <= 50 else commit['message'][:47] + '...')
         commitMessage = commitMessage.split('\n')[0]
@@ -72,7 +70,7 @@ def main():
                         "color": 14423100,
                         "timestamp": datetime.now().isoformat()}]}
 
-    r = requests.post(config.WEBHOOK_URL,
+    r = requests.post(webhook_url,
                       data=json.dumps(data),
                       headers={'Content-Type': 'application/json'})
     return (json.dumps(commits))
@@ -87,22 +85,6 @@ if __name__ == '__main__':
     except ImportError:
         print("You have not setup your config correctly. Please rename configexample.py to config.py and fill out the values in the file.")
         sys.exit(1)
-
-    try:
-        config.GITLAB_TOKEN
-    # Check if the user (somehow) forgot to add a GITLAB_TOKEN key to the config
-    except AttributeError:
-        configerror("missing", "GITLAB_TOKEN")
-        sys.exit(1)
-    else:
-        # No token is bad
-        if config.GITLAB_TOKEN == '':
-            configerror("missing", "GITLAB_TOKEN")
-            sys.exit(1)
-        # The equivalent of your password being password
-        elif config.GITLAB_TOKEN == "DefaultValuePleaseChangeMe":
-            configerror("default", "GITLAB_TOKEN")
-            sys.exit(1)
 
     try:
         config.SHOW_BRANCH
