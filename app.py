@@ -17,12 +17,10 @@ def configerror(type, key=None, extra=None):
 
 
 def checkwebhook(url):
-    # Check if URL is a Discord URL
-    if url.startswith("https://discordapp.com/api/webhooks/"):
-        r = requests.get(url).text
-        # Check if webhook is even active
-        if all(keys in r for keys in ("name", "guild_id", "token")):
-            return True
+    r = requests.get(url).text
+    # Check if webhook is even active
+    if all(keys in r for keys in ("name", "guild_id", "token")):
+        return True
 
 
 app = Flask(__name__)
@@ -50,6 +48,7 @@ def main():
     repo = content["repository"]["name"]
     isPrivate = content["repository"]["visibility_level"]
     branch = (":" + content["ref"].split("/")[2]) if config.SHOW_BRANCH == "TRUE" else ""
+
     for commit in content["commits"]:
         commitMessage = (commit['message'] if len(commit['message']) <= 50 else commit['message'][:47] + '...')
         commitMessage = commitMessage.split('\n')[0]
