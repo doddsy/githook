@@ -48,7 +48,6 @@ def main():
     repo = content["repository"]["name"]
     isPrivate = content["repository"]["visibility_level"]
     branch = (":" + content["ref"].split("/")[2]) if config.SHOW_BRANCH == "TRUE" else ""
-
     for commit in content["commits"]:
         commitMessage = (commit['message'] if len(commit['message']) <= 50 else commit['message'][:47] + '...')
         commitMessage = commitMessage.split('\n')[0]
@@ -63,15 +62,15 @@ def main():
             commits.append(
                 f"`{commit['id'][:7]}` - {commitMessage}"
             )
+    if numOfCommits > 0:
+        data = {"embeds": [{"description": '\n'.join(map(str, commits)),
+                            "title": f"{numOfCommits} new commits on {repo}{branch}",
+                            "color": 14423100,
+                            "timestamp": datetime.now().isoformat()}]}
 
-    data = {"embeds": [{"description": '\n'.join(map(str, commits)),
-                        "title": f"{numOfCommits} new commits on {repo}{branch}",
-                        "color": 14423100,
-                        "timestamp": datetime.now().isoformat()}]}
-
-    r = requests.post(webhook_url,
-                      data=json.dumps(data),
-                      headers={'Content-Type': 'application/json'})
+        r = requests.post(webhook_url,
+                          data=json.dumps(data),
+                          headers={'Content-Type': 'application/json'})
     return (json.dumps(commits))
 
 
