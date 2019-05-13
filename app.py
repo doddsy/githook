@@ -35,6 +35,10 @@ def main():
             return Response(status=400)
     else:
         return Response(status=400)
+    if 'hideAuthor' in request.args:
+        authorHidden = True
+    else:
+        authorHidden = False
 
     # If incoming request headers don't match Gitlab's headers or the token is not matching
     if not request.headers.get('X-Gitlab-Event'):
@@ -48,6 +52,7 @@ def main():
     repo = content["repository"]["name"]
     isPrivate = content["repository"]["visibility_level"]
     branch = (":" + content["ref"].split("/")[2]) if config.SHOW_BRANCH == "TRUE" else ""
+
     for commit in content["commits"]:
         if "githook:ignore" in commit['message']:
             continue
@@ -55,7 +60,9 @@ def main():
             commitMessage = "**This commit has been marked as private.**"
         else:
             commitMessage = (commit['message'] if len(commit['message']) <= 50 else commit['message'][:47] + '...')
-            commitMessage = commitMessage.split('\n')[0]
+        if authorHidden == False:
+            commitMessage += f" - *{content['user_username'].lower()}*"
+        commitMessage = commitMessage.split('\n')[0]
         commitUrl = commit['url']
         numOfCommits += 1
 
@@ -67,6 +74,7 @@ def main():
             commits.append(
                 f"`{commit['id'][:7]}` - {commitMessage}"
             )
+
     if numOfCommits > 0:
         data = {"embeds": [{"description": '\n'.join(map(str, commits)),
                             "title": f"{numOfCommits} new commits on {repo}{branch}",
