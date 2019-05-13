@@ -49,8 +49,13 @@ def main():
     isPrivate = content["repository"]["visibility_level"]
     branch = (":" + content["ref"].split("/")[2]) if config.SHOW_BRANCH == "TRUE" else ""
     for commit in content["commits"]:
-        commitMessage = (commit['message'] if len(commit['message']) <= 50 else commit['message'][:47] + '...')
-        commitMessage = commitMessage.split('\n')[0]
+        if "githook:ignore" in commit['message']:
+            continue
+        if "githook:private" in commit['message']:
+            commitMessage = "**This commit has been marked as private.**"
+        else:
+            commitMessage = (commit['message'] if len(commit['message']) <= 50 else commit['message'][:47] + '...')
+            commitMessage = commitMessage.split('\n')[0]
         commitUrl = commit['url']
         numOfCommits += 1
 
