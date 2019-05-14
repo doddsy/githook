@@ -1,2 +1,1 @@
-SHOW_BRANCH = 'TRUE'
 PORT = '5000'

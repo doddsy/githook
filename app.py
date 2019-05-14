@@ -42,11 +42,18 @@ def main():
             return Response(status=400)
     else:
         return Response(status=400)
+
     # optional parameters
     if 'hideAuthor' in request.args:
         authorHidden = True
     else:
         authorHidden = False
+
+    if 'hideBranch' in request.args:
+        branchHidden = True
+    else:
+        branchHidden = False
+
     # If incoming request headers don't match Gitlab's headers
     if not request.headers.get('X-Gitlab-Event'):
         # 401 unauthorised
@@ -59,7 +66,7 @@ def main():
     isPrivate = content["repository"]["visibility_level"]
     branch = (
         (":" + content["ref"].split("/")[2])
-        if config.SHOW_BRANCH == "TRUE"
+        if branchHidden == False
         else ""
     )
     commitUser = content['user_username']
@@ -122,24 +129,7 @@ if __name__ == '__main__':
             "You have not setup your config correctly. Please rename configexample.py to config.py and fill out the values in the file."
         )
         sys.exit(1)
-    try:
-        config.SHOW_BRANCH
-    # Check if the user (somehow) forgot to add a SHOW_BRANCH key to the config.
-    # We'll still let them run if this is missing, it's not like it's gonna ruin everything. Unlike you, Dave, you damn homewrecker.
-    except AttributeError:
-        configerror(
-            "undefined",
-            extra="You are missing a 'SHOW_BRANCH' key in your config. Branches will be hidden in commit embeds.",
-        )
-        config.SHOW_BRANCH = "FALSE"
-    else:
-        # If SHOW_BRANCH is something weird, don't the branch in commit embed messages.
-        if config.SHOW_BRANCH not in ("TRUE", "FALSE"):
-            configerror(
-                "undefined",
-                extra="Your 'SHOW_BRANCH' key is neither 'TRUE' or 'FALSE'. Defaulting to 'FALSE'.",
-            )
-            config.SHOW_BRANCH = "FALSE"
+
     try:
         config.PORT
     # Check if the user (somehow) forgot to add a PORT key to the config.
