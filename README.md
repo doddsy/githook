@@ -29,4 +29,7 @@ To set it up in GitLab, follow the content of Option B, making sure to replace m
 After the initial `?webhook=<your webhook URL>`, other parameters are supported but not required if default functionality is fine. These are listed here.
 
 - `&hideAuthor` - Hides author from commit messages
+- `&hideBranch` - Hides the commit branch from embed title
+- `&color=` or `&colour=` - Yes, you can use either spelling! Specify a color in hexadecimal and the embed "pill" will have this colour. If it's incorrect, the colour defaults to `#da143c`.
+    - Acceptable values for this are `fff`, `123`, `ff4500`, `000000` and any other hexadecimal color code you can think of. Just don't include a `#`.
 
