@@ -6,7 +6,6 @@ import requests
 from datetime import datetime
 import sys
 
-
 # Just wanted to try something new tbh
 def configerror(type, key=None, extra=None):
     if type == "missing":
@@ -24,9 +23,7 @@ def configerror(type, key=None, extra=None):
 def checkwebhook(url):
     r = requests.get(url).text
     # Check if webhook is even active
-    if all(
-        keys in r for keys in ("name", "guild_id", "token")
-    ):
+    if all(keys in r for keys in ("name", "guild_id", "token")):
         return True
 
 
@@ -42,18 +39,32 @@ def main():
             return Response(status=400)
     else:
         return Response(status=400)
-
     # optional parameters
+    # hideAuthor
     if 'hideAuthor' in request.args:
         authorHidden = True
     else:
         authorHidden = False
-
+    # hideBranch
     if 'hideBranch' in request.args:
         branchHidden = True
     else:
         branchHidden = False
-
+    # color
+    # set default fallback color
+    color = 14423100
+    for args in request.args:
+        if any(spelling in args for spelling in ('color', 'colour')):
+            color = request.args.get(args)
+            if (len(color) == 3) or (len(color) == 6):
+                if len(color) == 3:
+                    color = ''.join([letter * 2 for letter in color])
+                try:
+                    color = int(color, 16)
+                except:
+                    color = 14423100
+            else:
+                color = 14423100
     # If incoming request headers don't match Gitlab's headers
     if not request.headers.get('X-Gitlab-Event'):
         # 401 unauthorised
@@ -64,11 +75,7 @@ def main():
     numOfCommits = 0
     repo = content["repository"]["name"]
     isPrivate = content["repository"]["visibility_level"]
-    branch = (
-        (":" + content["ref"].split("/")[2])
-        if branchHidden == False
-        else ""
-    )
+    branch = (":" + content["ref"].split("/")[2]) if branchHidden == False else ""
     commitUser = content['user_username']
 
     for commit in content["commits"]:
@@ -89,22 +96,16 @@ def main():
         numOfCommits += 1
 
         if isPrivate != 0:
-            commits.append(
-                f"[`{commit['id'][:7]}`]({commitUrl}) - {commitMessage}"
-            )
+            commits.append(f"[`{commit['id'][:7]}`]({commitUrl}) - {commitMessage}")
         else:
-            commits.append(
-                f"`{commit['id'][:7]}` - {commitMessage}"
-            )
+            commits.append(f"`{commit['id'][:7]}` - {commitMessage}")
     if numOfCommits > 0:
         data = {
             "embeds": [
                 {
-                    "description": '\n'.join(
-                        map(str, commits)
-                    ),
+                    "description": '\n'.join(map(str, commits)),
                     "title": f"{numOfCommits} new commits on {repo}{branch}",
-                    "color": 14423100,
+                    "color": color,
                     "timestamp": datetime.now().isoformat(),
                 }
             ]
@@ -129,7 +130,6 @@ if __name__ == '__main__':
             "You have not setup your config correctly. Please rename configexample.py to config.py and fill out the values in the file."
         )
         sys.exit(1)
-
     try:
         config.PORT
     # Check if the user (somehow) forgot to add a PORT key to the config.
