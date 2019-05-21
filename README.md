@@ -2,28 +2,31 @@
 Githook is a small Python application designed to receive webhooks from GitLab and interpret them into Discord embeds (that look nicer than the default GitLab integrations.)
 
 ## How do I run it?
-### Option A) Docker
-:whale: Docker coming soon (maybe?)
+### Option A) :whale: Docker
+Clone the repo then `docker build -t githook .`.    
+Once that's done, run it like `docker run -d -p <your preferred port here>:5000 --name githook githook`.
 
 ### Option B) Public instance
 I have a public instance running on `https://metrono.de/githook`. (don't depend on this, things may change someday!)
 
-Specify your webhook at the end of this URL using the `?webhook=` parameter, add this entire URL to your GitLab integrations (**only push events are supported right now!**), and you're good to go. You'll know you've done it right if your URL matches something like `https://metrono.de/githook?webhook=https://discordapp.com/api/webhooks/1234567890123/iuhiuhiuygUYtbg8TBUYGgUYGUYGUYg876g87G87ghHUGUY8g87`, or you've tested it and you've received a webhook embed in the channel your webhook belongs to.
+Specify your webhook at the end of this URL using the `?webhook=` parameter, add this entire URL to your GitLab integrations, and you're good to go. You'll know you've done it right if your URL matches something like `https://metrono.de/githook?webhook=https://discordapp.com/api/webhooks/1234567890123/iuhiuhiuygUYtbg8TBUYGgUYGUYGUYg876g87G87ghHUGUY8g87`, or you've tested it and you've received a webhook embed in the channel your webhook belongs to.
 
 Further customisation *is* possible - see below for optional parameters.
 
 ### Option C) Self-hosted
-As a prerequisite, you **must** have a public-facing server that can be accessed on either port(s) 80, 443 (standard HTTP(S) ports) or the port you set in your [config.py](https://github.com/doddsy/githook/blob/master/configexample.py). This application can be reverse proxy'd through your server application of choice. I recommend Caddy, however I'm sure this works with nginx and Apache too, although I can't help with setting up either of those.
+As a prerequisite, you **must** have a public-facing server that can be accessed on either port(s) 80, 443 (standard HTTP(S) ports) or the port you set in either your [config.py](https://github.com/doddsy/githook/blob/master/configexample.py), your `PORT` environment variable, or using the `--port` flag when running the program. This application can be reverse proxy'd through your server application of choice. I recommend Caddy, however I'm sure this works with nginx and Apache too, although I can't help with setting up either of those.
 
-Clone the repo and rename/move `configeexample.py` to `config.py`. Feel free to hide branches by setting SHOW_BRANCHES to 'FALSE', or feel free to change the port here. If you have nothing running on port 5000 and you don't mind branches being shown in commit embeds, feel free to leave these as their default values.
-
-After that, run `pip install Flask requests`, wait for these packages to install, and then `python app.py`. Do note that you may have to run a different set of commands depending on your setup. This project also only supports Python 3, so you may need to `python3 app.py` instead.
+Clone the repo, then run `pip install Flask requests`, wait for these packages to install, and then `python app.py`. Specify a port using `--port` - i.e `--port 5050`. Do note that you may have to run a different set of commands depending on your setup. This project also only supports Python 3.6, so you may need to `python3 app.py` instead.
 
 To set it up in GitLab, follow the content of Option B, making sure to replace my URL with whatever your URL is, wherever necessary.
 
 ## Other features
-- Add `githook:ignore` to a commit message, and it will be hidden in the list of commits and not counted towards commits in that push event.
-- Add `githook:private` to a commit message, and the message will be replaced with "**This commit has been marked as private.**" in the webhook message.
+- Automatic repository URL'ing based on private/public state
+    - When an embed is sent, a hyperlink will be added to the message depending on whether or not a repo is public or private, which can allow for easy opening of that event in GitLab.
+- `githook:ignore`
+    - Add this to an issue description, and the issue won't be sent to Discord. Add it to a commit message, and it won't be included in the list of commits.
+- `githook:private`
+    - Add this to an issue description or a commit message and the content of the issue or the commit message won't be shown in the embed. It will be replaced with a different message explaining that that particular commit/issue has been marked as private.
 
 ### Optional Parameters
 After the initial `?webhook=<your webhook URL>`, other parameters are supported but not required if default functionality is fine. These are listed here.
