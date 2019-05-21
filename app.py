@@ -89,31 +89,25 @@ def main():
     except Exception:
         return Response(status=401)
 
+def start_app(port='5000'):
+    app.run(host='0.0.0.0', port=port)
 
 if __name__ == '__main__':
-    # So. Many. Checks.
-
-    # Check that the user isn't being stupid and has copied over the config sample
-    try:
-        import config
-    except ImportError:
-        print(
-            "You have not setup your config correctly. Please rename configexample.py to config.py and fill out the values in the file."
-        )
-        sys.exit(1)
-    try:
-        config.PORT
-    # Check if the user (somehow) forgot to add a PORT key to the config.
-    # We'll still let them run if this is missing, it's not like it's gonna ruin everything. Unlike Karen. Please I just want my kids back
-    except AttributeError:
-        print("You are missing a 'PORT' key in your config. Defaulting to port 5000.")
-        config.PORT = 5000
-    else:
-        # Same as above. We'll just set the default port ourselves cause we're a strong, independent application who don't need no user input
-        # to find the port. *sassy fingersnap*
-        if config.PORT == "":
-            print(
-                "You are missing a 'PORT' value in your config. Defaulting to port 5000."
-            )
-            config.PORT = 5000
-    app.run(host='0.0.0.0', port=config.PORT)
+    # Check if a system argument of port was provided
+    if '--port' in sys.argv:
+        try:
+            # Try and run with port argument
+            start_app(sys.argv[2])
+        except: 
+            # Run on default port
+            start_app()
+    elif 'PORT' in os.environ:
+        try:
+            # Try and run with ENV port
+            start_app(os.environ['PORT'])
+        except:
+            # Run on default port
+            start_app()
+    else: 
+        # Run on default port
+        start_app()

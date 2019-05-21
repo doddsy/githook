@@ -2,8 +2,9 @@
 Githook is a small Python application designed to receive webhooks from GitLab and interpret them into Discord embeds (that look nicer than the default GitLab integrations.)
 
 ## How do I run it?
-### Option A) Docker
-:whale: Docker coming soon (maybe?)
+### Option A) :whale: Docker
+Clone the repo then `docker build -t githook .`.    
+Once that's done, run it like `docker run -d -p <your preferred port here>:5000 --name githook githook`.
 
 ### Option B) Public instance
 I have a public instance running on `https://metrono.de/githook`. (don't depend on this, things may change someday!)
@@ -13,11 +14,9 @@ Specify your webhook at the end of this URL using the `?webhook=` parameter, add
 Further customisation *is* possible - see below for optional parameters.
 
 ### Option C) Self-hosted
-As a prerequisite, you **must** have a public-facing server that can be accessed on either port(s) 80, 443 (standard HTTP(S) ports) or the port you set in your [config.py](https://github.com/doddsy/githook/blob/master/configexample.py). This application can be reverse proxy'd through your server application of choice. I recommend Caddy, however I'm sure this works with nginx and Apache too, although I can't help with setting up either of those.
+As a prerequisite, you **must** have a public-facing server that can be accessed on either port(s) 80, 443 (standard HTTP(S) ports) or the port you set in either your [config.py](https://github.com/doddsy/githook/blob/master/configexample.py), your `PORT` environment variable, or using the `--port` flag when running the program. This application can be reverse proxy'd through your server application of choice. I recommend Caddy, however I'm sure this works with nginx and Apache too, although I can't help with setting up either of those.
 
-Clone the repo and rename/move `configeexample.py` to `config.py`. Feel free to hide branches by setting SHOW_BRANCHES to 'FALSE', or feel free to change the port here. If you have nothing running on port 5000 and you don't mind branches being shown in commit embeds, feel free to leave these as their default values.
-
-After that, run `pip install Flask requests`, wait for these packages to install, and then `python app.py`. Do note that you may have to run a different set of commands depending on your setup. This project also only supports Python 3, so you may need to `python3 app.py` instead.
+Clone the repo, then run `pip install Flask requests`, wait for these packages to install, and then `python app.py`. Specify a port using `--port` - i.e `--port 5050`. Do note that you may have to run a different set of commands depending on your setup. This project also only supports Python 3.6, so you may need to `python3 app.py` instead.
 
 To set it up in GitLab, follow the content of Option B, making sure to replace my URL with whatever your URL is, wherever necessary.
 
