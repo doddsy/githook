@@ -8,7 +8,7 @@ Githook is a small Python application designed to receive webhooks from GitLab a
 ### Option B) Public instance
 I have a public instance running on `https://metrono.de/githook`. (don't depend on this, things may change someday!)
 
-Specify your webhook at the end of this URL using the `?webhook=` parameter, add this entire URL to your GitLab integrations (**only push events are supported right now!**), and you're good to go. You'll know you've done it right if your URL matches something like `https://metrono.de/githook?webhook=https://discordapp.com/api/webhooks/1234567890123/iuhiuhiuygUYtbg8TBUYGgUYGUYGUYg876g87G87ghHUGUY8g87`, or you've tested it and you've received a webhook embed in the channel your webhook belongs to.
+Specify your webhook at the end of this URL using the `?webhook=` parameter, add this entire URL to your GitLab integrations, and you're good to go. You'll know you've done it right if your URL matches something like `https://metrono.de/githook?webhook=https://discordapp.com/api/webhooks/1234567890123/iuhiuhiuygUYtbg8TBUYGgUYGUYGUYg876g87G87ghHUGUY8g87`, or you've tested it and you've received a webhook embed in the channel your webhook belongs to.
 
 Further customisation *is* possible - see below for optional parameters.
 
