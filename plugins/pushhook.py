@@ -3,9 +3,9 @@ from datetime import datetime
 EVENT = 'Push Hook'
 
 def run(request,
+        color,
         authorHidden,
-        branchHidden,
-        color):
+        branchHidden):
     content = request.get_json()
     commits = []
     numOfCommits = 0
