@@ -22,8 +22,12 @@ After that, run `pip install Flask requests`, wait for these packages to install
 To set it up in GitLab, follow the content of Option B, making sure to replace my URL with whatever your URL is, wherever necessary.
 
 ## Other features
-- Add `githook:ignore` to a commit message, and it will be hidden in the list of commits and not counted towards commits in that push event.
-- Add `githook:private` to a commit message, and the message will be replaced with "**This commit has been marked as private.**" in the webhook message.
+- Automatic repository URL'ing based on private/public state
+    - When an embed is sent, a hyperlink will be added to the message depending on whether or not a repo is public or private, which can allow for easy opening of that event in GitLab.
+- `githook:ignore`
+    - Add this to an issue description, and the issue won't be sent to Discord. Add it to a commit message, and it won't be included in the list of commits.
+- `githook:private`
+    - Add this to an issue description or a commit message and the content of the issue or the commit message won't be shown in the embed. It will be replaced with a different message explaining that that particular commit/issue has been marked as private.
 
 ### Optional Parameters
 After the initial `?webhook=<your webhook URL>`, other parameters are supported but not required if default functionality is fine. These are listed here.
