@@ -12,9 +12,9 @@ def run(request, color, *args):
     issueEditorAvatar = content["user"]["avatar_url"]
     issueID = content["object_attributes"]["iid"]
     issueTitle = '*' + content["object_attributes"]["title"] + '*'
-    if "githook:ignore" in content["object_attributes"]["description"]:
+    if any(x in content["object_attributes"]["description"] for x in ("githook:ignore", "gh:i")):
         return "empty"
-    elif "githook:private" in content["object_attributes"]["description"]:
+    elif any(x in content["object_attributes"]["description"] for x in ("githook:private", "gh:p")):
         issueTitle = ''
         issueDescription = "This issue has been marked as private, and as such the issue description will not be shown."
     else:
