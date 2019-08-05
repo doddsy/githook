@@ -23,9 +23,9 @@ To set it up in GitLab, follow the content of Option B, making sure to replace m
 ## Other features
 - Automatic repository URL'ing based on private/public state
     - When an embed is sent, a hyperlink will be added to the message depending on whether or not a repo is public or private, which can allow for easy opening of that event in GitLab.
-- `githook:ignore`
+- `githook:ignore` or `gh:i`
     - Add this to an issue description, and the issue won't be sent to Discord. Add it to a commit message, and it won't be included in the list of commits.
-- `githook:private`
+- `githook:private` or `gh:p`
     - Add this to an issue description or a commit message and the content of the issue or the commit message won't be shown in the embed. It will be replaced with a different message explaining that that particular commit/issue has been marked as private.
 
 ### Optional Parameters

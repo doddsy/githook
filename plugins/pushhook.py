@@ -15,9 +15,9 @@ def run(request,
     commitUser = content['user_username']
 
     for commit in content["commits"]:
-        if "githook:ignore" in commit['message']:
+        if any(x in commit['message'] for x in ("githook:ignore", "gh:i")):
             continue
-        if "githook:private" in commit['message']:
+        if any(x in commit['message'] for x in ("githook:private", "gh:p")):
             commitMessage = "**This commit has been marked as private.**"
         else:
             commitMessage = (
