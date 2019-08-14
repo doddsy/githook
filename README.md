@@ -1,3 +1,8 @@
+# This project has moved
+### [Githook has moved to GitLab and been renamed to 'Thishook'](https://gitlab.com/vixen-team/thishook). This GitHub repo now serves as an archive and will no longer be updated.
+
+---
+
 # githook
 Githook is a small Python application designed to receive webhooks from GitLab and interpret them into Discord embeds (that look nicer than the default GitLab integrations.)
 
